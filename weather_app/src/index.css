@@ -47,16 +47,21 @@
 
 .forecast ul::-webkit-scrollbar {
   scrollbar-width: thin;
+  padding: 2rem;
+  scroll-padding-block: 20rem;
+  order: 5px solid red;
 }
 
 .forecast ul::-webkit-scrollbar-track {
   background-color: #e4e4e4;
   border-radius: 100px;
+  border: 5px solid red;
 }
 
 .forecast ul::-webkit-scrollbar-thumb {
   background-color: #d4aa70;
   border-radius: 100px;
+  order: 5px solid red;
 }
 
 .img-bgc {
