@@ -1,7 +1,7 @@
-export async function fetching(api: string, q: string) {
+export async function fetching(api: string, q: string, days: number) {
   try {
     const query = await fetch(
-      `http://api.weatherapi.com/v1${api}?key=e6b7e2578d6a4205a1a103322251711&q=${q}`
+      `http://api.weatherapi.com/v1${api}?key=e6b7e2578d6a4205a1a103322251711&q=${q}&days=${days}&aqi=no&alerts=no`
     );
 
     if (!query.ok) throw new Error(`Błąd weatherApi!: ${query.statusText}`);
