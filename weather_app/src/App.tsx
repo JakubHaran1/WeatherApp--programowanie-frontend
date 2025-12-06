@@ -4,18 +4,11 @@ import MainPart from "./components/MainPart";
 import NavComponent from "./components/NavComponent";
 import Forecast from "./components/Forecast";
 
-import { fetching } from "./utils";
-import { weatherIcons } from "./assets/weatherIcons";
+import { fetching, getIcon } from "./utils";
 
 import { useState, useEffect } from "react";
 
 function App() {
-  function getIcon(code: number, day: number) {
-    const newDay = day == 0 ? "0" : "1";
-    const icons = weatherIcons[code][newDay];
-    return icons;
-  }
-
   const [coords, setCoords] = useState<number[] | null>(null);
 
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +39,7 @@ function App() {
   }, []);
 
   type locationTypes = {
-    name: string | undefined;
+    name: string;
     country: string;
   };
 
@@ -66,6 +59,7 @@ function App() {
         avgtemp_c: number;
         avgtemp_f: number;
         condition: { code: number; text: string };
+        is_day: number;
       };
     }[];
   };
@@ -80,7 +74,7 @@ function App() {
 
   useEffect(() => {
     (async () => {
-      if (coords?.[0] == undefined && coords?.[1] == undefined) return;
+      if (!coords) return;
 
       const { data, error } = await fetching(
         "/forecast.json",
@@ -101,34 +95,43 @@ function App() {
   useEffect(() => {
     console.log(conditions ?? "No");
   }, [conditions]);
-
+  if (!conditions) {
+    return (
+      <main className=" bg-blue-900 text-center">
+        <div className="weather-app">
+          <h3 className="my-auto">NO DATA ;_;</h3>
+        </div>
+      </main>
+    );
+  }
   return (
     <main className="grid grid-rows-2 grid-cols-1 align-self-start min-h-screen relative  bg-blue-900 p-3 ">
       <h3>{error}</h3>
       <ImgBgc
-        link={
-          getIcon(
-            conditions?.current.condition.code ?? 1003,
-            conditions?.current.is_day ?? 0
-          ) ?? "--"
-        }
+        link={getIcon(
+          conditions.current.condition.code,
+          conditions.current.is_day
+        )}
       />
 
-      <div className="weather-app row-start-1 row-end-3 self-start w-85  md:w-150  relative rounded-md m-auto  z-1 py-5 md:grid  md:grid-cols-2 md:grid-rows-[0.3fr,1fr,0.3fr]">
+      <div className="weather-app row-start-1 row-end-3 self-start w-85  md:w-150  relative rounded-md m-auto  z-1 py-5 p-3 md:grid  md:grid-cols-2 md:grid-rows-[0.3fr,1fr,0.3fr]">
         <NavComponent city={conditions?.location.name ?? "--"} />
         <MainPart
-          city={conditions?.location.name ?? "--"}
-          country={conditions?.location.country ?? "--"}
-          icon={getIcon(1003, conditions?.current.is_day ?? 0) ?? "--"}
-          temp={conditions?.current.temp_c ?? "--"}
-          text={conditions?.current.condition.text ?? "--"}
+          city={conditions.location.name}
+          country={conditions.location.country}
+          icon={getIcon(
+            conditions.current.condition.code,
+            conditions.current.is_day ?? 0
+          )}
+          temp={conditions.current.temp_c}
+          text={conditions.current.condition.text}
         />
         <ConditionList
-          wind={conditions?.current.wind_kph ?? "--"}
-          precip={conditions?.current.precip_mm ?? "--"}
-          cloud={conditions?.current.cloud ?? "--"}
+          wind={conditions.current.wind_kph}
+          precip={conditions.current.precip_mm}
+          cloud={conditions.current.cloud}
         />
-        <Forecast />
+        <Forecast {...conditions.forecast} />
       </div>
     </main>
   );

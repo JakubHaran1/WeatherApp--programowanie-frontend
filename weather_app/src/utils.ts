@@ -1,4 +1,6 @@
-export async function fetching(api: string, q: string, days: number) {
+import { weatherIcons } from "./assets/weatherIcons";
+
+async function fetching(api: string, q: string, days: number) {
   try {
     const query = await fetch(
       `http://api.weatherapi.com/v1${api}?key=e6b7e2578d6a4205a1a103322251711&q=${q}&days=${days}&aqi=no&alerts=no`
@@ -15,3 +17,11 @@ export async function fetching(api: string, q: string, days: number) {
     };
   }
 }
+
+function getIcon(code: number, day: number) {
+  const newDay = day == 0 ? "0" : "1";
+  const icons = weatherIcons[code][newDay];
+  return icons;
+}
+
+export { fetching, getIcon };

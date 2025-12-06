@@ -1,8 +1,18 @@
+let timeoutValue: ReturnType<typeof setTimeout> | null;
+
+function searchFeature(e: React.KeyboardEvent<HTMLInputElement>) {
+  if (timeoutValue) timeoutValue = null;
+  timeoutValue = setTimeout(() => {
+    console.log(e);
+  }, 300);
+}
+
 export default function NavComponent({ city }: { city: string }) {
   return (
     <nav className="flex justify-center items-center md:w-full md:col-span-2   md:grid-row-1">
       <div className="search basis-90 text-center">
         <input
+          onKeyDown={searchFeature}
           id="city"
           name="city"
           className="bg-blue-400  rounded-l-md p-1"
