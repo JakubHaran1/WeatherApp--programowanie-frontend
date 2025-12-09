@@ -28,9 +28,7 @@ export default function Forecast(forecastData: forecastObjTypes) {
                 className="w-25 mx-auto"
                 alt=""
               />
-              <h4>
-                {day.date.split("-")[1]}.{day.date.split("-")[0]}
-              </h4>
+              <h4>{`${day.date.split("-")[2]}.${day.date.split("-")[1]}`}</h4>
               <p>{day.day.condition.text}</p>
               <p>
                 {day.day.avgtemp_c}

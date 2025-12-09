@@ -10,11 +10,10 @@ import { useState, useEffect } from "react";
 
 function App() {
   const [coords, setCoords] = useState<number[] | null>(null);
-
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    (async () => {
+    const getCoords = async function () {
       navigator.geolocation.getCurrentPosition(
         (data) => {
           try {
@@ -35,7 +34,8 @@ function App() {
           setCoords(user_coords);
         }
       );
-    })();
+    };
+    getCoords();
   }, []);
 
   type locationTypes = {
@@ -73,7 +73,7 @@ function App() {
   const [conditions, setConditions] = useState<dataObjType | null>(null);
 
   useEffect(() => {
-    (async () => {
+    const fetchForecast = async function () {
       if (!coords) return;
 
       const { data, error } = await fetching(
@@ -89,12 +89,14 @@ function App() {
       } else {
         setError(error);
       }
-    })();
+    };
+    fetchForecast();
   }, [coords]);
 
   useEffect(() => {
     console.log(conditions ?? "No");
   }, [conditions]);
+
   if (!conditions) {
     return (
       <main className=" bg-blue-900 text-center">
@@ -104,6 +106,7 @@ function App() {
       </main>
     );
   }
+
   return (
     <main className="grid grid-rows-2 grid-cols-1 align-self-start min-h-screen relative  bg-blue-900 p-3 ">
       <h3>{error}</h3>
@@ -115,7 +118,10 @@ function App() {
       />
 
       <div className="weather-app row-start-1 row-end-3 self-start w-85  md:w-150  relative rounded-md m-auto  z-1 py-5 p-3 md:grid  md:grid-cols-2 md:grid-rows-[0.3fr,1fr,0.3fr]">
-        <NavComponent city={conditions?.location.name ?? "--"} />
+        <NavComponent
+          city={conditions?.location.name ?? "--"}
+          errorState={setError}
+        />
         <MainPart
           city={conditions.location.name}
           country={conditions.location.country}
