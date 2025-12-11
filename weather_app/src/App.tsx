@@ -6,10 +6,11 @@ import Forecast from "./components/Forecast";
 
 import { fetching, getIcon } from "./utils";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 function App() {
   const [coords, setCoords] = useState<number[] | null>(null);
+
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -55,12 +56,13 @@ function App() {
   type forecastObjTypes = {
     forecastday: {
       date: string;
-      day: {
-        avgtemp_c: number;
-        avgtemp_f: number;
+      hour: {
+        time: string;
+        temp_f: number;
+        temp_c: number;
         condition: { code: number; text: string };
         is_day: number;
-      };
+      }[];
     }[];
   };
 
@@ -72,26 +74,37 @@ function App() {
 
   const [conditions, setConditions] = useState<dataObjType | null>(null);
 
-  useEffect(() => {
-    const fetchForecast = async function () {
-      if (!coords) return;
+  type LocationDataType = {
+    name: string;
+    country: string;
+  }[];
 
-      const { data, error } = await fetching(
-        "/forecast.json",
-        `${coords?.[0]},${coords?.[1]}`,
-        5
-      );
-      if (error == null) {
-        const dataObj: dataObjType = data;
-        console.log(dataObj);
+  const [location, setLocation] = useState<LocationDataType>([]);
+  const fetchForecast = useCallback(
+    (coords: number[]) => {
+      async function forecast() {
+        let query: string;
+        if (location.length > 0) query = location[0].name;
+        else query = `${coords?.[0]},${coords?.[1]}`;
 
-        setConditions(dataObj);
-      } else {
-        setError(error);
+        const { data, error } = await fetching("/forecast.json", query);
+        if (error == null) {
+          const dataObj: dataObjType = data;
+          console.log(dataObj);
+
+          setConditions(dataObj);
+        } else {
+          setError(error);
+        }
       }
-    };
-    fetchForecast();
-  }, [coords]);
+      forecast();
+    },
+    [location]
+  );
+  useEffect(() => {
+    if (!coords) return;
+    fetchForecast(coords);
+  }, [fetchForecast, coords]);
 
   useEffect(() => {
     console.log(conditions ?? "No");
@@ -121,6 +134,8 @@ function App() {
         <NavComponent
           city={conditions?.location.name ?? "--"}
           errorState={setError}
+          locationSetter={setLocation}
+          location={location}
         />
         <MainPart
           city={conditions.location.name}
@@ -131,13 +146,14 @@ function App() {
           )}
           temp={conditions.current.temp_c}
           text={conditions.current.condition.text}
+          date={conditions.forecast.forecastday[0].date}
         />
         <ConditionList
           wind={conditions.current.wind_kph}
           precip={conditions.current.precip_mm}
           cloud={conditions.current.cloud}
         />
-        <Forecast {...conditions.forecast} />
+        <Forecast forecastday={conditions.forecast.forecastday[0]} />
       </div>
     </main>
   );

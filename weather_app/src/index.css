@@ -11,17 +11,25 @@
 .forecast li,
 .search input,
 .search button,
-.search-bar {
+.search-bar,
+.search-bar li {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(50px);
   -webkit-backdrop-filter: blur(50px);
-
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
     inset 0 0 0px 0px rgba(255, 255, 255, 0);
-
   overflow: hidden;
 }
-
+.search-bar {
+  z-index: 1;
+  cursor: pointer;
+  backdrop-filter: blur(0);
+  -webkit-backdrop-filter: blur(0);
+  background: rgba(37, 74, 185, 0.754);
+}
+.search-bar li:hover {
+  background: rgb(26, 66, 187);
+}
 .tilt-neon {
   font-family: "Tilt Neon", sans-serif;
   font-optical-sizing: auto;
@@ -76,6 +84,13 @@
 .img-bgc img {
   width: 15rem;
   height: 15rem;
+}
+
+.search-bar {
+  display: none;
+}
+.search-bar.active {
+  display: block;
 }
 
 @media (max-width: 350px) {
