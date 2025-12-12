@@ -1,30 +1,36 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { fetching } from "../utils";
+
+import { addFav } from "../store/fav/favSlice";
 type LocationDataType = {
   name: string;
   country: string;
 }[];
+
 export default function NavComponent({
   city,
+  country,
   errorState,
   locationSetter,
   location,
 }: {
   city: string;
+  country: string;
   errorState: React.Dispatch<React.SetStateAction<string | null>>;
   locationSetter: React.Dispatch<React.SetStateAction<LocationDataType>>;
   location: LocationDataType;
 }) {
-  const [inputValue, setInputValue] = useState<string | null>(null);
-  const [displayValue, setDisplayValue] = useState(city);
-
   const timeoutValue = useRef<ReturnType<typeof setTimeout> | null | number>(
     null
   );
-  const eventRef = useRef<HTMLDivElement>(null);
-  const [searchBar, setSearchBar] = useState<boolean>(false);
 
+  const eventRef = useRef<HTMLDivElement>(null);
+  const [inputValue, setInputValue] = useState<string | null>(null);
+  const [displayValue, setDisplayValue] = useState(city);
+  const [searchBar, setSearchBar] = useState<boolean>(false);
   const [locationsData, setLocationsData] = useState<LocationDataType | []>([]);
+  const dispatchFav = useDispatch();
 
   function inputHandler(e: React.ChangeEvent<HTMLInputElement>) {
     setDisplayValue(e.target.value);
@@ -101,7 +107,9 @@ export default function NavComponent({
             : ""}
         </div>
       </div>
-      <div className="nav-el mt-2 ">
+      <div
+        className="nav-el mt-2 "
+        onClick={() => dispatchFav(addFav({ name: city, country: country }))}>
         <i className="fa-solid text-xl fa-star"></i>
       </div>
     </nav>
