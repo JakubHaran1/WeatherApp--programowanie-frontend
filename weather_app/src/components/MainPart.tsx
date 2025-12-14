@@ -18,10 +18,10 @@ export default function MainPart({
       <p className="text-center">
         <span className="city  mr-2 font-medium text-xl">{city},</span>
         <span className="country ">{country}</span>
-        <h3>
-          {date.split("-")[2]}.{date.split("-")[1]}.{date.split("-")[0]}
-        </h3>
       </p>
+      <h3 className="text-center">
+        {date.split("-")[2]}.{date.split("-")[1]}.{date.split("-")[0]}
+      </h3>
       <div className="imgs-wrapper ">
         <img src={"./animated/" + icon} className="w-45 mx-auto" alt="" />
       </div>

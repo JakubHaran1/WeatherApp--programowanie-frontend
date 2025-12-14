@@ -16,7 +16,7 @@ const favSlice = createSlice({
       state,
       action: PayloadAction<{ name: string; country: string }>
     ) => {
-      state.fav = [...state.fav, action.payload];
+      state.fav.push(action.payload);
     },
   },
 });

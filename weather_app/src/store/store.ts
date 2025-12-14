@@ -3,7 +3,7 @@ import favReducer from "./fav/favSlice";
 
 export const store = configureStore({
   reducer: {
-    favList: favReducer,
+    fav: favReducer,
   },
 });
 

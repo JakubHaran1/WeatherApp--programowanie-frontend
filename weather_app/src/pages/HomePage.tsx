@@ -9,12 +9,14 @@ import { fetching, getIcon } from "../utils";
 import { useState, useEffect, useCallback } from "react";
 
 export default function HomePage() {
-  type locationTypes = {
+  // lokalizacja dla której jest pobierane API
+  type CurrentLocationTypes = {
     name: string;
     country: string;
   };
 
-  type currentObjTypes = {
+  // Pod typ zwrócenia z api
+  type CurrentWeatherTypes = {
     condition: { code: number; text: string };
     is_day: number;
     temp_c: number;
@@ -23,7 +25,8 @@ export default function HomePage() {
     cloud: number;
   };
 
-  type forecastObjTypes = {
+  // Pod typ do mainType - prognoza godzinowa
+  type ForecastTypes = {
     forecastday: {
       date: string;
       hour: {
@@ -36,73 +39,78 @@ export default function HomePage() {
     }[];
   };
 
-  type dataObjType = {
-    current: currentObjTypes;
-    location: locationTypes;
-    forecast: forecastObjTypes;
+  // main datatype dla forecast api
+  type MainObjType = {
+    current: CurrentWeatherTypes;
+    location: CurrentLocationTypes;
+    forecast: ForecastTypes;
   };
 
-  type LocationDataType = {
-    name: string;
-    country: string;
-  }[];
-
-  const [coords, setCoords] = useState<number[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [conditions, setConditions] = useState<dataObjType | null>(null);
-  const [location, setLocation] = useState<LocationDataType>([]);
+  const [coords, setCoords] = useState<number[]>([]);
+  const [error, setError] = useState<string>("");
+  const [conditions, setConditions] = useState<MainObjType | null>(null);
+  const [location, setLocation] = useState<CurrentLocationTypes>({
+    name: "--",
+    country: "--",
+  });
 
   useEffect(() => {
-    const getCoords = async function () {
-      navigator.geolocation.getCurrentPosition(
-        (data) => {
-          try {
-            const user_coords = [data.coords.latitude, data.coords.longitude];
-            setCoords(user_coords);
-          } catch (error) {
-            let message;
-            if (error instanceof Error && error.message != "") {
-              message = error.message;
-            } else {
-              message = "Critical error !";
-            }
-            setError(message);
-          }
-        },
-        () => {
-          const user_coords = [52.2298, 21.0118];
-          setCoords(user_coords);
-        }
-      );
-    };
-    getCoords();
+    navigator.geolocation.getCurrentPosition(
+      (data) => {
+        const user_coords = [data.coords.latitude, data.coords.longitude];
+        setCoords(user_coords);
+      },
+      () => {
+        const user_coords = [52.2298, 21.0118];
+        setCoords(user_coords);
+      }
+    );
   }, []);
 
-  const fetchForecast = useCallback(
-    (coords: number[]) => {
-      async function forecast() {
-        let query: string;
-        if (location.length > 0) query = location[0].name;
-        else query = `${coords?.[0]},${coords?.[1]}`;
-
-        const { data, error } = await fetching("/forecast.json", query);
-        if (error == null) {
-          const dataObj: dataObjType = data;
-          console.log(dataObj);
-
-          setConditions(dataObj);
-        } else {
-          setError(error);
-        }
-      }
-      forecast();
-    },
-    [location]
-  );
   useEffect(() => {
-    if (!coords) return;
-    fetchForecast(coords);
-  }, [fetchForecast, coords]);
+    if (typeof coords[0] != "number") return;
+
+    const getLocation = async () => {
+      try {
+        const { data, error } = await fetching(
+          "/search.json",
+          `${coords[0]},${coords[1]}`
+        );
+        if (error || !data || data.length === 0)
+          throw new Error("Search Api Error");
+
+        setLocation({ name: data[0].name, country: data[0].country });
+      } catch (err) {
+        setError((err as Error).message);
+      }
+    };
+    getLocation();
+  }, [coords]);
+
+  const fetchForecast = useCallback(() => {
+    if (location.name == "--") return;
+    async function forecast() {
+      const query = location.name;
+      console.log(location.name);
+
+      const { data, error } = await fetching("/forecast.json", query);
+
+      console.log(data);
+      if (error == null) {
+        const dataObj: MainObjType = data;
+        console.log(dataObj);
+
+        setConditions(dataObj);
+      } else {
+        setError(error);
+      }
+    }
+    forecast();
+  }, [location]);
+
+  useEffect(() => {
+    fetchForecast();
+  }, [fetchForecast]);
 
   useEffect(() => {
     console.log(conditions ?? "No");
@@ -147,6 +155,7 @@ export default function HomePage() {
           text={conditions.current.condition.text}
           date={conditions.forecast.forecastday[0].date}
         />
+
         <ConditionList
           wind={conditions.current.wind_kph}
           precip={conditions.current.precip_mm}

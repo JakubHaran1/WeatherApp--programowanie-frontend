@@ -1,40 +1,49 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { fetching } from "../utils";
-
+import { useSelector } from "react-redux";
+import type { RootState } from "../store/store";
 import { addFav } from "../store/fav/favSlice";
-type LocationDataType = {
+type CurrentLocationTypes = {
+  name: string;
+  country: string;
+};
+// typ do obiektów location z listy z search api
+type SearchArrayType = {
   name: string;
   country: string;
 }[];
-
 export default function NavComponent({
   city,
-  country,
   errorState,
   locationSetter,
   location,
 }: {
   city: string;
   country: string;
-  errorState: React.Dispatch<React.SetStateAction<string | null>>;
-  locationSetter: React.Dispatch<React.SetStateAction<LocationDataType>>;
-  location: LocationDataType;
+  errorState: React.Dispatch<React.SetStateAction<string>>;
+  locationSetter: React.Dispatch<React.SetStateAction<CurrentLocationTypes>>;
+  location: CurrentLocationTypes;
 }) {
   const timeoutValue = useRef<ReturnType<typeof setTimeout> | null | number>(
     null
   );
 
   const eventRef = useRef<HTMLDivElement>(null);
+
+  // zmienna do wayszukwiarki -  callowania api - co x s
   const [inputValue, setInputValue] = useState<string | null>(null);
+
+  // zmienna do wyszikiwarki do wyświetlania danych - aktuializacja na bieżąco
   const [displayValue, setDisplayValue] = useState(city);
+  // zmienna przechowująca stan navbara- czy widoczny czy nie
   const [searchBar, setSearchBar] = useState<boolean>(false);
-  const [locationsData, setLocationsData] = useState<LocationDataType | []>([]);
+  // zmienna do navbara - przechowuje dane
+  const [locationsData, setLocationsData] = useState<SearchArrayType | []>([]);
   const dispatchFav = useDispatch();
+  const lists = useSelector((state: RootState) => state.fav.fav);
 
   function inputHandler(e: React.ChangeEvent<HTMLInputElement>) {
-    setDisplayValue(e.target.value);
-
     if (timeoutValue.current) clearTimeout(timeoutValue.current);
     timeoutValue.current = setTimeout(() => {
       setInputValue(e.target.value);
@@ -72,12 +81,15 @@ export default function NavComponent({
         className="search relative text-center d-flex justify-content-center flex-wrap"
         ref={eventRef}>
         <input
-          onChange={inputHandler}
+          onChange={(el) => {
+            setDisplayValue(el.target.value);
+            inputHandler(el);
+          }}
           id="city"
           name="city"
           className="bg-blue-400  rounded-l-md p-1"
           type="text"
-          value={location.length > 0 ? location[0].name : displayValue}
+          value={displayValue}
           onFocus={() => setSearchBar(true)}
         />
         <button className="bg-blue-500 rounded-r-md mt py-1 px-2 cursor-pointer ">
@@ -95,9 +107,8 @@ export default function NavComponent({
                     <li
                       className="py-2"
                       onClick={() => {
-                        locationSetter([
-                          { country: el.country, name: el.name },
-                        ]);
+                        locationSetter({ country: el.country, name: el.name });
+                        setDisplayValue(el.name);
                       }}>
                       {el.name} / <span className="italic ">{el.country}</span>
                     </li>
@@ -109,7 +120,12 @@ export default function NavComponent({
       </div>
       <div
         className="nav-el mt-2 "
-        onClick={() => dispatchFav(addFav({ name: city, country: country }))}>
+        onClick={() => {
+          console.log(lists);
+          dispatchFav(addFav(location));
+
+          console.log(lists);
+        }}>
         <i className="fa-solid text-xl fa-star"></i>
       </div>
     </nav>
