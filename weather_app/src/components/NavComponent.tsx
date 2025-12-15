@@ -1,8 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { fetching } from "../utils";
-import { useSelector } from "react-redux";
-import type { RootState } from "../store/store";
+import { useDispatch } from "react-redux";
 import { addFav } from "../store/fav/favSlice";
 type CurrentLocationTypes = {
   name: string;
@@ -32,16 +30,15 @@ export default function NavComponent({
   const eventRef = useRef<HTMLDivElement>(null);
 
   // zmienna do wayszukwiarki -  callowania api - co x s
-  const [inputValue, setInputValue] = useState<string | null>(null);
+  const [inputValue, setInputValue] = useState<string | null>(location.name);
 
   // zmienna do wyszikiwarki do wyświetlania danych - aktuializacja na bieżąco
-  const [displayValue, setDisplayValue] = useState(city);
+  const [displayValue, setDisplayValue] = useState(location.name);
   // zmienna przechowująca stan navbara- czy widoczny czy nie
   const [searchBar, setSearchBar] = useState<boolean>(false);
   // zmienna do navbara - przechowuje dane
   const [locationsData, setLocationsData] = useState<SearchArrayType | []>([]);
   const dispatchFav = useDispatch();
-  const lists = useSelector((state: RootState) => state.fav.fav);
 
   function inputHandler(e: React.ChangeEvent<HTMLInputElement>) {
     if (timeoutValue.current) clearTimeout(timeoutValue.current);
@@ -121,10 +118,7 @@ export default function NavComponent({
       <div
         className="nav-el mt-2 "
         onClick={() => {
-          console.log(lists);
           dispatchFav(addFav(location));
-
-          console.log(lists);
         }}>
         <i className="fa-solid text-xl fa-star"></i>
       </div>

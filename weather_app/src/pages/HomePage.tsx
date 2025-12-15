@@ -7,8 +7,9 @@ import Forecast from "../components/Forecast";
 import { fetching, getIcon } from "../utils";
 
 import { useState, useEffect, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store/store";
+import { removeFav } from "../store/fav/favSlice";
 export default function HomePage() {
   const lists = useSelector((state: RootState) => state.fav.fav);
   console.log("list", lists);
@@ -57,6 +58,7 @@ export default function HomePage() {
     country: "--",
   });
   const favList = useSelector((state: RootState) => state.fav.fav);
+  const dispatchFav = useDispatch();
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (data) => {
@@ -141,7 +143,6 @@ export default function HomePage() {
 
       <div className="weather-app row-start-1 row-end-3 self-start w-85  md:w-150  relative rounded-md m-auto  z-1 py-5 p-3 md:grid  md:grid-cols-2 md:grid-rows-[0.3fr,1fr,0.3fr]">
         <NavComponent
-          city={conditions?.location.name ?? "--"}
           country={conditions?.location.country ?? "--"}
           errorState={setError}
           locationSetter={setLocation}
@@ -173,12 +174,33 @@ export default function HomePage() {
             <ul>
               {favList.map((el) => (
                 <li key={el.name}>
-                  {el.name}/{el.country}
+                  <p
+                    onClick={() =>
+                      setLocation({ name: el.name, country: el.country })
+                    }>
+                    {el.name}/{el.country}
+                  </p>
+
+                  <i
+                    className="fa-solid fa-xmark "
+                    onClick={() =>
+                      dispatchFav(
+                        removeFav({ country: el.country, name: el.name })
+                      )
+                    }></i>
                 </li>
               ))}
             </ul>
           </section>
         )}
+
+        {/* {localStorage.length > 0 && (
+          <section className="fav-list row-start-5 row-end-6 col-start-1 col-end-3   text-center ">
+            <h2 className="mb-3">Favorite list</h2>
+
+            <ul></ul>
+          </section>
+        )} */}
       </div>
     </main>
   );
