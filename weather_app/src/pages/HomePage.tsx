@@ -7,8 +7,11 @@ import Forecast from "../components/Forecast";
 import { fetching, getIcon } from "../utils";
 
 import { useState, useEffect, useCallback } from "react";
-
+import { useSelector } from "react-redux";
+import type { RootState } from "../store/store";
 export default function HomePage() {
+  const lists = useSelector((state: RootState) => state.fav.fav);
+  console.log("list", lists);
   // lokalizacja dla której jest pobierane API
   type CurrentLocationTypes = {
     name: string;
@@ -53,7 +56,7 @@ export default function HomePage() {
     name: "--",
     country: "--",
   });
-
+  const favList = useSelector((state: RootState) => state.fav.fav);
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (data) => {
@@ -162,6 +165,20 @@ export default function HomePage() {
           cloud={conditions.current.cloud}
         />
         <Forecast forecastday={conditions.forecast.forecastday[0]} />
+
+        {favList.length > 0 && (
+          <section className="fav-list row-start-5 row-end-6 col-start-1 col-end-3   text-center ">
+            <h2 className="mb-3">Favorite list</h2>
+
+            <ul>
+              {favList.map((el) => (
+                <li key={el.name}>
+                  {el.name}/{el.country}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
     </main>
   );

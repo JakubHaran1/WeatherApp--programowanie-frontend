@@ -92,7 +92,9 @@
 .search-bar.active {
   display: block;
 }
-
+.fav-list li {
+  cursor: pointer;
+}
 @media (max-width: 350px) {
   .weather-app {
     width: 20rem;

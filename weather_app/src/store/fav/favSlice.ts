@@ -16,7 +16,11 @@ const favSlice = createSlice({
       state,
       action: PayloadAction<{ name: string; country: string }>
     ) => {
-      state.fav.push(action.payload);
+      const exist = state.fav.find(
+        (el) =>
+          el.name == action.payload.name && el.country == action.payload.country
+      );
+      if (!exist) state.fav.push(action.payload);
     },
   },
 });
