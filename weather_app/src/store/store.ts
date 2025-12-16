@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import favSlice from "./fav/favSlice";
+import unitSlice from "./unit/unitSlice";
 
 export const store = configureStore({
   reducer: {
     fav: favSlice,
+    unit: unitSlice,
   },
 });
 

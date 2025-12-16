@@ -1,7 +1,9 @@
 import React, { useRef, useState, useEffect } from "react";
 import { fetching } from "../utils";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addFav } from "../store/fav/favSlice";
+import { changeUnit } from "../store/unit/unitSlice";
+import type { RootState } from "../store/store";
 type CurrentLocationTypes = {
   name: string;
   country: string;
@@ -12,12 +14,10 @@ type SearchArrayType = {
   country: string;
 }[];
 export default function NavComponent({
-  city,
   errorState,
   locationSetter,
   location,
 }: {
-  city: string;
   country: string;
   errorState: React.Dispatch<React.SetStateAction<string>>;
   locationSetter: React.Dispatch<React.SetStateAction<CurrentLocationTypes>>;
@@ -38,8 +38,8 @@ export default function NavComponent({
   const [searchBar, setSearchBar] = useState<boolean>(false);
   // zmienna do navbara - przechowuje dane
   const [locationsData, setLocationsData] = useState<SearchArrayType | []>([]);
-  const dispatchFav = useDispatch();
-
+  const dispatch = useDispatch();
+  const unitState = useSelector((state: RootState) => state.unit.unit);
   function inputHandler(e: React.ChangeEvent<HTMLInputElement>) {
     if (timeoutValue.current) clearTimeout(timeoutValue.current);
     timeoutValue.current = setTimeout(() => {
@@ -118,9 +118,16 @@ export default function NavComponent({
       <div
         className="nav-el mt-2 "
         onClick={() => {
-          dispatchFav(addFav(location));
+          dispatch(addFav(location));
         }}>
         <i className="fa-solid text-xl fa-star"></i>
+      </div>
+      <div
+        className="nav-el mt-2 border-2 rounded-full w-[30px] h-[30px] flex items-center justify-center  cursor-pointer"
+        onClick={() => {
+          dispatch(changeUnit());
+        }}>
+        <p className=" block">°{unitState}</p>
       </div>
     </nav>
   );
