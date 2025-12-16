@@ -24,6 +24,7 @@ export default function HomePage() {
     condition: { code: number; text: string };
     is_day: number;
     temp_c: number;
+    temp_f: number;
     wind_kph: number;
     precip_mm: number;
     cloud: number;
@@ -155,7 +156,8 @@ export default function HomePage() {
             conditions.current.condition.code,
             conditions.current.is_day ?? 0
           )}
-          temp={conditions.current.temp_c}
+          temp_c={conditions.current.temp_c}
+          temp_f={conditions.current.temp_f}
           text={conditions.current.condition.text}
           date={conditions.forecast.forecastday[0].date}
         />

@@ -1,4 +1,6 @@
+import { useSelector } from "react-redux";
 import { getIcon } from "../utils";
+import type { RootState } from "../store/store";
 type hoursDataType = {
   forecastday: {
     hour: {
@@ -12,6 +14,7 @@ type hoursDataType = {
 };
 
 export default function Forecast({ forecastday }: hoursDataType) {
+  const unitState = useSelector((state: RootState) => state.unit.unit);
   return (
     <section className="forecast overflow-hidden md:col-start-2 md:col-end-3   md:grid-row-1  md:content-center ">
       <h3>
@@ -30,8 +33,9 @@ export default function Forecast({ forecastday }: hoursDataType) {
               <h4>{`${day.time.split(" ")[1]}`}</h4>
               <p>{day.condition.text}</p>
               <p>
-                {day.temp_c}
-                <span className="unit">°c</span>
+                <span className="unit">
+                  {unitState == "F" ? day.temp_c + "°c" : day.temp_f + "°F"}
+                </span>
               </p>
             </li>
           );
