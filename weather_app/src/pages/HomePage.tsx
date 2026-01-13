@@ -11,8 +11,6 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store/store";
 import { removeFav } from "../store/fav/favSlice";
 export default function HomePage() {
-  const lists = useSelector((state: RootState) => state.fav.fav);
-  console.log("list", lists);
   // lokalizacja dla której jest pobierane API
   type CurrentLocationTypes = {
     name: string;
@@ -97,11 +95,9 @@ export default function HomePage() {
     if (location.name == "--") return;
     async function forecast() {
       const query = location.name;
-      console.log(location.name);
 
       const { data, error } = await fetching("/forecast.json", query);
 
-      console.log(data);
       if (error == null) {
         const dataObj: MainObjType = data;
         console.log(dataObj);
@@ -117,10 +113,6 @@ export default function HomePage() {
   useEffect(() => {
     fetchForecast();
   }, [fetchForecast]);
-
-  useEffect(() => {
-    console.log(conditions ?? "No");
-  }, [conditions]);
 
   if (!conditions) {
     return (

@@ -8,7 +8,7 @@ async function fetching(api: string, q: string) {
 
     if (!query.ok) throw new Error(`Błąd weatherApi!: ${query.statusText}`);
     const data = await query.json();
-    console.log("data", data);
+
     return { data, error: null };
   } catch (err) {
     return {

@@ -22,9 +22,10 @@ export default function Forecast({ forecastday }: hoursDataType) {
       </h3>
       <ul className="flex overflow-x-scroll gap-3 pt-3 pb-5">
         {forecastday.hour.map((day) => {
-          console.log("d", day);
           return (
-            <li className="p-2 text-center rounded-lg ">
+            <li
+              className="p-2 text-center rounded-lg "
+              key={`${day.time.split(" ")[1]}`}>
               <img
                 src={"./static/" + getIcon(day.condition.code, day.is_day)}
                 className="w-25 mx-auto"
