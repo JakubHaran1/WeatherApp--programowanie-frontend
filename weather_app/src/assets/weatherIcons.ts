@@ -10,7 +10,7 @@ export const weatherIcons: iconsTypes = {
   1063: { 1: "rainy-1-day.svg", 0: "rainy-1-night.svg" }, // Patchy rain possible
 
   1066: { 1: "snowy-1-day.svg", 0: "snowy-1-night.svg" }, // Patchy snow possible
-  1069: { 1: "sleet.svg", 0: "sleet.svg" }, // Patchy sleet possible
+  1069: { 1: "rain-and-sleet-mix.svg", 0: "rain-and-sleet-mix.svg" }, // Patchy sleet possible
   1072: { 1: "rain-and-sleet-mix.svg", 0: "rain-and-sleet-mix.svg" }, // Patchy freezing drizzle possible
 
   1087: {
@@ -40,7 +40,7 @@ export const weatherIcons: iconsTypes = {
   1198: { 1: "rain-and-sleet-mix.svg", 0: "rain-and-sleet-mix.svg" }, // Light freezing rain
   1201: { 1: "rain-and-sleet-mix.svg", 0: "rain-and-sleet-mix.svg" }, // Moderate or heavy freezing rain
 
-  1204: { 1: "sleet.svg", 0: "sleet.svg" }, // Light sleet
+  1204: { 1: "rain-and-sleet-mix.svg", 0: "rain-and-sleet-mix.svg" }, // Light sleet
   1207: { 1: "snow-and-sleet-mix.svg", 0: "snow-and-sleet-mix.svg" }, // Moderate or heavy sleet
 
   1210: { 1: "snowy-1-day.svg", 0: "snowy-1-night.svg" }, // Patchy light snow
@@ -55,7 +55,7 @@ export const weatherIcons: iconsTypes = {
   1243: { 1: "rainy-2-day.svg", 0: "rainy-2-night.svg" }, // Moderate or heavy rain shower
   1246: { 1: "rainy-3-day.svg", 0: "rainy-3-night.svg" }, // Torrential rain shower
 
-  1249: { 1: "sleet.svg", 0: "sleet.svg" }, // Light sleet showers
+  1249: { 1: "rain-and-sleet-mix.svg", 0: "rain-and-sleet-mix.svg" }, // Light sleet showers
   1252: { 1: "snow-and-sleet-mix.svg", 0: "snow-and-sleet-mix.svg" }, // Moderate or heavy sleet showers
 
   1255: { 1: "snowy-1-day.svg", 0: "snowy-1-night.svg" }, // Light snow showers
